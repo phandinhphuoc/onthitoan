@@ -1,0 +1,20 @@
+{
+  "topics": [
+    {
+      "id": "toan_4_tuan_1",
+      "title": "Toán lớp 4 - Tuần 1: Ôn tập các số đến 100.000",
+      "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "video_quizzes": [
+        {"question": "Mã bảo mật hiện ra ở giây thứ 10 là gì?", "answer": "TOAN4"},
+        {"question": "Thầy giáo nói kết quả của 5 + 5 bằng bao nhiêu?", "answer": "10"}
+      ],
+      "question_banks": {
+        "bank_1": [{"q": "Tính: $1/2 + 1/4$", "options": ["$\\sqrt{2}$", "1/6", "2/6", "1/2"], "a": "3/4"}],
+        "bank_2": [{"q": "Tính: $3/4 \\times 2$", "options": ["3/2", "5/4", "6/8", "1/4"], "a": "3/2"}],
+        "bank_3": [{"q": "Số nào lớn nhất?", "options": ["100", "200", "50", "10"], "a": "200"}],
+        "bank_4": [{"q": "1km bằng bao nhiêu mét?", "options": ["1000m", "100m", "10m", "1m"], "a": "1000m"}],
+        "bank_5": [{"q": "Hình vuông có mấy cạnh?", "options": ["4", "3", "2", "5"], "a": "4"}]
+      }
+    }
+  ]
+}
