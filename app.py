@@ -8,13 +8,17 @@ from datetime import datetime
 # --- CẤU HÌNH TRANG ---
 st.set_page_config(page_title="Hệ Thống Luyện Toán", layout="wide")
 
-# --- CSS ĐẶC TRỊ DARK MODE & FIX TƯƠNG PHẢN ---
+# --- CSS TỔNG LỰC: DARK MODE + FIX TƯƠNG PHẢN + ẨN LOGO STREAMLIT ---
 st.markdown("""
     <style>
-    /* Nền ứng dụng */
-    .stApp { background-color: #0E1117; color: white; }
+    /* 1. ẨN LOGO VÀ MENU STREAMLIT */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    [data-testid="stDecoration"] { display: none; }
 
-    /* KHUNG BAO CÂU HỎI */
+    /* 2. GIAO DIỆN DARK MODE */
+    .stApp { background-color: #0E1117; color: white; }
     [data-testid="stVerticalBlockBorderWrapper"] {
         background-color: #1A1C23 !important;
         border: 1px solid #30363D !important;
@@ -23,55 +27,42 @@ st.markdown("""
         margin-bottom: 25px !important;
     }
 
-    /* CHỮ TRẮNG TOÀN CỤC */
+    /* 3. FIX CHỮ VÀ CÔNG THỨC (TRẮNG TRÊN NỀN TỐI) */
     .stMarkdown p, span, label, div { color: white !important; font-size: 18px; }
     .q-title { color: #58A6FF !important; font-weight: bold; font-size: 20px; }
+    .katex { color: white !important; }
 
-    /* ẨN NHÃN RADIO (label_1) */
+    /* 4. DIỆT TẬN GỐC LABEL_1 */
     div[data-testid="stRadio"] > label, 
     div[data-testid="stRadio"] [data-testid="stWidgetLabel"] {
         display: none !important;
     }
 
-    /* FIX MÀU Ô NHẬP LIỆU (TextInput) */
+    /* 5. FIX Ô NHẬP LIỆU (INPUT) */
     input {
         background-color: #21262D !important;
         color: white !important;
-        border: 1px solid #30363D !important;
+        border: 1px solid #444C56 !important;
     }
 
-    /* CẤU TRÚC ĐÁP ÁN RADIO */
-    div[data-testid="stRadio"] > div[role="radiogroup"] {
-        display: grid !important;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-        gap: 12px !important;
+    /* 6. THIẾT KẾ NÚT BẤM VÀ RADIO */
+    .stButton > button {
+        background-color: #21262D !important;
+        color: white !important;
+        border: 1px solid #444C56 !important;
+        font-weight: bold;
     }
+    .stButton > button:hover { border-color: #58A6FF !important; color: #58A6FF !important; }
+
     div[data-testid="stRadio"] label {
         background-color: #21262D !important;
         border: 1px solid #444C56 !important;
         border-radius: 8px !important;
         padding: 10px 15px !important;
-        transition: 0.3s;
     }
-    div[data-testid="stRadio"] label:hover {
-        border-color: #58A6FF !important;
-        background-color: #30363D !important;
-    }
+    div[data-testid="stRadio"] label:hover { border-color: #58A6FF !important; }
 
-    /* FIX NÚT BẤM (BUTTONS) - ĐẢM BẢO KHÔNG BỊ TRÙNG MÀU */
-    .stButton > button {
-        background-color: #21262D !important;
-        color: white !important;
-        border: 1px solid #444C56 !important;
-        width: 100%;
-        font-weight: bold;
-    }
-    .stButton > button:hover {
-        border-color: #58A6FF !important;
-        color: #58A6FF !important;
-    }
-
-    /* NÚT NỘP BÀI - XANH LÁ NỔI BẬT */
+    /* 7. NÚT NỘP BÀI (XANH LÁ) */
     .stFormSubmitButton { display: flex !important; justify-content: center !important; }
     .stFormSubmitButton button {
         background-color: #238636 !important;
@@ -82,19 +73,17 @@ st.markdown("""
         border: none !important;
     }
 
-    /* NÚT LIÊN KẾT TRANG CHỦ */
+    /* 8. NÚT LIÊN KẾT TRANG CHỦ */
     .link-button {
         display: inline-block; padding: 12px; border-radius: 8px;
         text-decoration: none; font-weight: bold; text-align: center; width: 100%;
     }
     .yt-btn { background-color: #FF0000; color: white !important; }
     .reg-btn { background-color: #007BFF; color: white !important; }
-    
-    .katex { color: white !important; }
     </style>
 """, unsafe_allow_html=True)
 
-# --- LOGIC XỬ LÝ (GIỮ NGUYÊN) ---
+# --- LOGIC APP (Giữ nguyên các phần đã tối ưu) ---
 def load_data():
     if os.path.exists('data.json'):
         with open('data.json', 'r', encoding='utf-8') as f:
@@ -123,7 +112,7 @@ if "video_q_selected" not in st.session_state: st.session_state.video_q_selected
 
 data = load_data()
 
-# --- GIAO DIỆN TRANG CHỦ ---
+# --- GIAO DIỆN CHÍNH ---
 if st.session_state.current_page == "Home":
     st.markdown("<h1 style='text-align: center;'>🎓 HỆ THỐNG LUYỆN TOÁN</h1>", unsafe_allow_html=True)
     c1, c2 = st.columns(2)
@@ -137,11 +126,11 @@ if st.session_state.current_page == "Home":
         if pw == "admin123":
             if os.path.exists('ket_qua_lam_bai.csv'):
                 res_df = pd.read_csv('ket_qua_lam_bai.csv')
-                st.download_button("📥 Tải kết quả", data=res_df.to_csv(index=False).encode('utf-8-sig'), file_name="ketqua.csv")
+                st.download_button("📥 Tải điểm", data=res_df.to_csv(index=False).encode('utf-8-sig'), file_name="ketqua.csv")
                 st.dataframe(res_df)
 
     for topic in data.get("topics", []):
-        if st.button(f"📖 {topic['title']}", key=topic['id']):
+        if st.button(f"📖 {topic['title']}", key=topic['id'], use_container_width=True):
             st.session_state.current_page = topic['id']
             st.session_state.step = 1
             st.session_state.quiz_list = generate_quiz(topic)
@@ -149,7 +138,6 @@ if st.session_state.current_page == "Home":
             if v_quizzes: st.session_state.video_q_selected = random.choice(v_quizzes)
             st.rerun()
 
-# --- GIAO DIỆN LÀM BÀI ---
 else:
     topic = next((t for t in data["topics"] if t["id"] == st.session_state.current_page), None)
     if st.button("⬅️ Quay lại"):
